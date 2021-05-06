@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width">
+  <title>Weather - Ubeyin LLC</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nerko+One" />
+  <!-- Script Links -->
+  <link rel="stylesheet" href="https://ubeyin.github.io/fontawesome/all.css">
+  <link rel="stylesheet" href="https://ubeyin.github.io/dist/alertbox/alert.min.css">
+</head>
+<body>
+  <style type="text/css">
+    body {
+      margin: 0;
+      background: #e1e1e1;
+      font-family: Poppins,Sans-Serif;
+    }
+    *,*:before,*:after {
+      box-sizing: border-box;
+    }
+
+    .container-row {
+      display: table;
+      clear: both;
+      width: 100%;
+      white-space:;
+      height: 200px;
+      text-align: center;
+    }
+    .ub-box {
+      box-shadow: 0 2px 4.8px 0 rgba(0,0,0,0.2);
+      transition: 0.3s;
+      background: #fff;
+      border-radius: 0.25rem;
+      margin: 10px;
+      padding: 12px;
+      width: 95%;
+      float: left;
+    }
+@media(min-width: 500px) {
+      .ub-box {
+        width: 300px;
+      }
+    }
+    .center {
+      text-align: center;
+    }
+    .aleft {
+      text-align: left;
+    }
+    .aright {
+      text-align: right;
+    }
+    .left {
+      float: left;
+    }
+    .right {
+      float: right;
+    }
+    .ub-box > h1,h2,h3,h4,h5,h6 {
+      margin: 3px;
+    }
+    .ub-box > h3 {
+      font-size: 16px;
+    }
+    /** Nav Bar and Navigation menu **/
+    #ub-navbar {
+      width: 100%;
+      height: 55px;
+      background: #ffffff;
+      color: #333;
+      user-select: none;
+    }
+    #ub-navbar-logo {
+      font-family: "Nerko One";
+      font-size: 27.10px;
+      margin: 7px;
+      float: left;
+      margin-left: 12px;
+    }
+    #ub-navbar-search {
+      float: right;
+      margin: 7px;
+      transition: .2s ease;
+      height: 40px;
+      width: 40px;
+      border-radius: 100rem;
+      text-align: center;
+    }
+    #ub-navbar-search > i {
+      margin-top: 10px;
+    }
+    #ub-navbar-search:active,#change-weather:active {
+      background: rgba(0,0,0,0.1);
+    }
+    #ub-buttons > article {
+      display: flex;
+    }
+    #ub-buttons {
+      width: 100%;
+      height: auto;
+      background: #eee;
+      margin: 0;
+      font-size: 15px;
+      font-family: "Poppins";
+      user-select: none;
+    }
+    #ub-buttons > article section {
+      margin-bottom: 0px;
+      margin-top: 8px;
+      margin-left: 19px;
+      margin-right: 10px;
+    }
+    #ub-buttons > article section:first-child {
+      margin-left: 45px;
+    }
+    #ub-buttons > div {
+      border-bottom: 0.7px solid rgba(0,0,0,0.2);
+      margin-left: 10px;
+      margin-right: 10px;
+      width: 95%;
+      height: 0.1px;
+    }
+    #ub-buttons-active {
+      width: 68px;
+      height: 1px;
+      background: #333;
+      margin-left: 32px;
+      border-radius: 100rem;
+      margin-top: 5px;
+      transition: .3s ease;
+    }
+@media(min-width: 500px) {
+      #ub-buttons-active {
+        width: 59.0px;
+      }
+    }
+
+
+    /** Home **/
+    #ub-weather-box1, #ub-weather-box2, #ub-weather-box3 {
+      min-height: 350px;
+    }
+    #ub-weather-box1 > div {
+      padding: 10px;
+      padding-top: 1px;
+      margin-top: 15px;
+    }
+    #ub-weather-c {
+      float: left;
+    }
+    #ub-weather-more {
+      font-size: 14.3px;
+      opacity: 0.8;
+      font-weight: 600;
+      text-align: right;
+      float: left;
+      width: 100%;
+    }
+    #ub-weather-more > aside i {
+      color: #333;
+      margin-left: 15px;
+      font-size: 15px;
+    }
+    #ub-weather-more > section i {
+      color: #333;
+      margin-right: 15px;
+      font-size: 15px;
+    }
+    #ub-weather-more > section {
+      float: left;
+      font-family: Poppins;
+      text-align: left;
+    }
+    #ub-weather-more > aside {
+      float: right;
+      font-family: Poppins;
+    }
+    #ub-weather-loc {
+      float: left;
+      text-align: center;
+      width: 100%;
+      font-weight: 600;
+      font-size: 12px;
+      margin-top: 30px;
+      font-family: "Raleway";
+    }
+    #weather-error {
+      width: 100%;
+      float: left;
+      margin-top: 30px;
+    }
+
+    /** policy **/
+    #ub-policy-box {
+      height: 95vh;
+      text-align: center;
+    }
+@media(min-width: 500px) {
+      #ub-policy-box {
+        width: 60%;
+      }
+    }
+
+    /** display **/
+    #ub-about, #ub-policy, #ub-signup {
+      display: none;
+    }
+
+  </style>
+  <nav id="ub-navbar">
+    <div id="ub-navbar-logo">
+      Ubeyin
+    </div>
+    <div id="ub-navbar-search">
+      <i class="fas fa-siren-on"></i>
+    </div>
+  </nav>
+  <header id="ub-buttons">
+    <article>
+      <section id="home">
+        HOME
+      </section>
+      <section id="about">
+        ABOUT
+      </section>
+      <section id="policy">
+        POLICY
+      </section>
+      <section id="signup">
+        SIGN UP
+      </section>
+    </article>
+    <footer id="ub-buttons-active"></footer>
+    <div></div>
+  </header>
+  <div class="container-row" id="ub-home">
+    <aside class="ub-box" id="ub-weather-box1">
+      <h3 class="left aleft">
+        <i class="fad fa-flag"></i> Today
+      </h3>
+      <h5 class="right aright" id="change-weather">
+        <i class="fad fa-pen"></i> Change
+      </h5>
+      <div class="left" id="weather">
+        <img width="60" height="60" border="0" id="ub-weather-img">
+        <h3 id="ub-weather-c">
+
+        </h3>
+        <p id="ub-weather-more">
+
+        </p>
+      </div>
+      <div id="weather-error">
+        Please click the change button to see the current weather in your area and enter your area name.
+      </div>
+    </aside>
+    <aside class="ub-box" id="ub-weather-box2">
+      <h3 class="aleft">
+        <i class="fad fa-flag"></i> News
+      </h3>
+    </aside>
+    <aside class="ub-box" id="ub-weather-box3">
+      <h3 class="aleft">
+        <i class="fad fa-flag"></i> Feeds
+      </h3>
+    </aside>
+  </div>
+  <div class="container-row" id="ub-about">
+    <aside class="ub-box" id="ub-about-box1">
+      <h3 class="aleft">
+        <i class="fad fa-flag"></i> News
+      </h3>
+    </aside>
+    <aside class="ub-box" id="ub-about-box2">
+      <h3 class="aleft">
+        <i class="fad fa-flag"></i> Feeds
+      </h3>
+    </aside>
+  </div>
+  <div class="container-row" id="ub-policy">
+    <iframe src="https://ubeyin.github.io/terms_policy.txt" frameborder="0" id="ub-policy-box"></iframe>
+  </div>
+  <div class="container-row" id="ub-signup">
+
+  </div>
+  <div id="ub-prompt">
+    <div id="ub-prompt-box">
+
+    </div>
+  </div>
+  <script src="https://ubeyin.github.io/ustack/1.0/ustack.js" type="text/javascript" charset="utf-8"></script>
+  <script src="https://ubeyin.github.io/dist/alertbox/alert.min.js" type="text/javascript" charset="utf-8"></script>
+
+  <script type="text/javascript" charset="utf-8">
+    if ("undefined" == typeof Ubeyin) throw new TypeError("Ustack JS are required.");
+    function weatherInit(q, err) {
+      new Ubeyin().weather({
+        key: "8a1362221e524488b3e112953200305",
+        value: q,
+        unit: 1,
+        days: 3
+      }).then({
+        load: function (argument) {
+          document.getElementById("ub-weather-img").src = argument.current.condition.icon;
+          document.getElementById("ub-weather-c").innerHTML = argument.current.temp_c+"°C<br><p style='font-size: 17px; margin: 2px'>"+argument.current.condition.text+"</p>";
+          let uv, uvc;
+          switch (argument.current.uv) {
+            case 1:
+              uv = "Low";
+              uvc = "Green";
+              break;
+            case 2:
+              uv = "Low";
+              uvc = "Green";
+              break;
+            case 3:
+              uv = "Moderate";
+              uvc = "#889b00";
+              break;
+            case 4:
+              uv = "Moderate";
+              uvc = "#889b00";
+              break;
+            case 5:
+              uv = "Moderate";
+              uvc = "#889b00";
+              break;
+            case 6:
+              uv = "High";
+              uvc = "Orange";
+              break;
+            case 7:
+              uv = "High";
+              uvc = "Orange";
+              break;
+            case 8:
+              uv = "Very High";
+              uvc = "#f94040";
+              break;
+            case 9:
+              uv = "Very High";
+              uvc = "#f94040";
+              break;
+            case 10:
+              uv = "Very High";
+              uvc = "#f94040";
+              break;
+            case 11:
+              uv = "Extreme";
+              uvc = "#8e048eb0";
+              break;
+            default:
+              uv = "";
+              uvc = "";
+            }
+            let partA = "<aside>"+argument.current.wind_mph+" meter <i class='fad fa-wind'></i><br>"+argument.current.wind_degree+"° in "+argument.current.wind_dir+" <i class='fad fa-wind'></i><br><br>"+argument.forecast.forecastday[0].astro.sunset+" <i class='fas fa-sunset'></i></aside>";
+            let partB = "<section><i class='fas fa-sun' style='color: "+uvc+"; opacity: 0.87'></i> "+uv+"<br><i class='fas fa-dewpoint'></i> "+argument.current.humidity+"% <br><br><i class='fas fa-sunrise'></i>"+argument.forecast.forecastday[0].astro.sunrise+"</section><br><br>";
+            let partC = "<div id='ub-weather-loc'><i class='fad fa-location'></i> "+argument.location.name+", "+argument.location. country+"</div>";
+            document.getElementById("ub-weather-more").innerHTML = partA+ partB+ partC;
+            console.log(argument);
+            document.getElementById("weather").style.display = "block";
+            document.getElementById("weather-error").style.display = "none";
+          },
+          error: function(e) {
+            console.error(e);
+            new PromptBoxes().error(e);
+            document.getElementById("weather").style.display = "none";
+            document.getElementById("weather-error").style.display = "block";
+            document.getElementById("weather-error").innerHTML = "<font color='orange'><i class='fa fa-exclamation-triangle'></i> An unknown error happens<br> or your city is invalid.</font><br><br><br>Please click the change button to see the current weather in your area and enter your correct area name.";
+          }
+        });
+      }
+      Ub.gps().then({
+        load: function(lat, lon) {
+          weatherInit("q="+lat+", "+ lon)
+        },
+        error: function(b, a) {
+          console.error(b, a)
+          document.getElementById("weather-error").style.display = "block";
+          document.getElementById("weather").style.display = "none";
+          document.getElementById("weather-error").innerHTML = " <font color='orange'><i class='fa fa-exclamation-triangle'></i> "+a+"</font><br><br><br>Please click the change button to see the current weather in your area and enter your area name.";
+        }
+      });
+
+      document.getElementById("home").onclick = function() {
+        document.getElementById("ub-buttons-active").style.marginLeft = "32px";
+        document.getElementById("ub-home").style.display = "block";
+        document.getElementById("ub-about").style.display = "none";
+        document.getElementById("ub-policy").style.display = "none";
+        document.getElementById("ub-signup").style.display = "none";
+      };
+      document.getElementById("about").onclick = function() {
+        document.getElementById("ub-buttons-active").style.marginLeft = "110px";
+        document.getElementById("ub-home").style.display = "none";
+        document.getElementById("ub-about").style.display = "block";
+        document.getElementById("ub-policy").style.display = "none";
+        document.getElementById("ub-signup").style.display = "none";
+      };
+      document.getElementById("policy").onclick = function() {
+        document.getElementById("ub-buttons-active").style.marginLeft = "195px";
+        document.getElementById("ub-home").style.display = "none";
+        document.getElementById("ub-about").style.display = "none";
+        document.getElementById("ub-policy").style.display = "block";
+        document.getElementById("ub-signup").style.display = "none";
+      };
+      document.getElementById("signup").onclick = function() {
+        document.getElementById("ub-buttons-active").style.marginLeft = "275px";
+        document.getElementById("ub-home").style.display = "none";
+        document.getElementById("ub-about").style.display = "none";
+        document.getElementById("ub-policy").style.display = "none";
+        document.getElementById("ub-signup").style.display = "block";
+      };
+      document.getElementById("change-weather").onclick = function() {
+        var pb = new PromptBoxes();
+
+        pb.prompt(function(value) {
+          if (value != false) {
+            weatherInit("q="+value);
+          }
+        },
+          "Enter your city name or position");
+      }
+
+    </script>
+  </body>
+</html>
