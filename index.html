@@ -483,9 +483,9 @@
 
       let url = "https://ubeyin.github.io";
       Ub.fetch(url).then("text()", function(d) {
-        if (window.location.href === url) {
-          document.getElementById("ub-spinner").style.display = "none";
-        }
+        //  if (window.location.href === url) {
+        document.getElementById("ub-spinner").style.display = "none";
+        //  }
       });
     </script>
   </body>
