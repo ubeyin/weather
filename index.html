@@ -415,7 +415,7 @@
             }
             let partA = "<aside>"+argument.current.wind_mph+" meter <i class='fad fa-wind'></i><br>"+argument.current.wind_degree+"° in "+argument.current.wind_dir+" <i class='fad fa-wind'></i><br><br>"+argument.forecast.forecastday[0].astro.sunset+" <i class='fas fa-sunset'></i></aside>";
             let partB = "<section><i class='fas fa-sun' style='color: "+uvc+"; opacity: 0.87'></i> "+uv+"<br><i class='fas fa-dewpoint'></i> "+argument.current.humidity+"% <br><br><i class='fas fa-sunrise'></i>"+argument.forecast.forecastday[0].astro.sunrise+"</section><br><br>";
-            let partC = "<div id='ub-weather-loc'><i class='fad fa-location'></i> "+argument.location.name+", "+argument.location. country+"</div>";
+            let partC = "<div id='ub-weather-loc'><i class='fad fa-location'></i> "+argument.location.name+", "+argument.location.country+"<br>"+argument.location.lat+", "+argument.location.lon+"</div>";
             document.getElementById("ub-weather-more").innerHTML = partA+ partB+ partC;
             console.log(argument);
             document.getElementById("weather").style.display = "block";
