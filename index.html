@@ -202,7 +202,7 @@
       float: left;
       margin-top: 30px;
     }
-    #ub-weather-box2 > div, #ub-weather-box3 > div, #ub-weather-box4 > div {
+    #ub-weather-box2 > div, #ub-weather-box3 > div {
       display: flex;
       clear: both;
       white-space: nowrap;
@@ -210,7 +210,7 @@
       width: 355px;
       overflow-x: scroll;
     }
-    #ub-weather-box2 > div div, #ub-weather-box3 > div div, #ub-weather-box4 > div div {
+    #ub-weather-box2 > div div, #ub-weather-box3 > div div {
       box-shadow: 0 2px 4.8px 0 rgba(0,0,0,0.2);
       transition: 0.3s;
       background: #fff;
@@ -222,7 +222,7 @@
       float: left;
     }
 @media(min-width: 500px) {
-      #ub-weather-box2, #ub-weather-box3, #ub-weather-box4 {
+      #ub-weather-box2, #ub-weather-box3 {
         width: 300px;
       }
     }
@@ -318,11 +318,6 @@
       </div>
     </aside>
     <aside class="ub-box" id="ub-weather-box3">
-      <div>
-
-      </div>
-    </aside>
-    <aside class="ub-box" id="ub-weather-box4">
       <div>
 
       </div>
@@ -469,7 +464,6 @@
           hour: function(i, data) {
             document.querySelector("#ub-weather-box2 > div").innerHTML += "<div>"+data[0].hour[i].condition.text+"</div><br>";
             document.querySelector("#ub-weather-box3 > div").innerHTML += "<div>"+data[1].hour[i].condition.text+"</div><br>";
-            document.querySelector("#ub-weather-box4 > div").innerHTML += "<div>"+data[2].hour[i].condition.text+"</div><br>";
           }
         });
       }
