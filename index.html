@@ -468,7 +468,7 @@
           },
           hour: function(i, data) {
             let uv, uvc, uv2, uvc2;
-            switch (data[0].hour[i].uv) {
+            switch (data[0].day.uv) {
               case 1:
                 uv = "Low";
                 uvc = "Green";
@@ -517,7 +517,7 @@
                 uv = "";
                 uvc = "";
               }
-              switch (data[1].hour[i].uv) {
+              switch (data[1].day.uv) {
                 case 1:
                   uv2 = "Low";
                   uvc2 = "Green";
