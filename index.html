@@ -472,7 +472,7 @@
             document.getElementById("weather-error").innerHTML = "<font color='orange'><i class='fa fa-exclamation-triangle'></i> An unknown error happens<br> or your city is invalid.</font><br><br><br>Please click the change button to see the current weather in your area and enter your correct area name.";
           },
           hour: function(i, data) {
-            document.getElementById("ub-weather-box2").innerHTML += data.forecastday[0].condition.text;
+            document.getElementById("ub-weather-box2").innerHTML += data[0].forecastday.condition.text;
           }
         });
       }
