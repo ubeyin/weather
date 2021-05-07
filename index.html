@@ -467,8 +467,13 @@
             document.getElementById("weather-error").innerHTML = "<font color='orange'><i class='fa fa-exclamation-triangle'></i> An unknown error happens<br> or your city is invalid.</font><br><br><br>Please click the change button to see the current weather in your area and enter your correct area name.";
           },
           hour: function(i, data) {
-            document.querySelector("#ub-weather-box2 > div").innerHTML += "<div>"+data[0].hour[i].condition.text+"</div><br>";
-            document.querySelector("#ub-weather-box3 > div").innerHTML += "<div>"+data[1].hour[i].condition.text+"</div><br>";
+            let part1A = "<aside>"+data[0].hour[i].wind_mph+" meter <i class='fad fa-wind'></i><br>"+data[0].hour[i].wind_degree+"° in "+data[0].hour[i].wind_dir+" <i class='fad fa-wind'></i><br><br>"+data[0].astro.sunset+" <i class='fas fa-sunset'></i></aside>";
+            let part1B = "<section><i class='fas fa-sun' style='color: "+uvc+"; opacity: 0.87'></i> "+uv+"<br><i class='fas fa-dewpoint'></i> "+data[0].hour[i].humidity+"% <br><br><i class='fas fa-sunrise'></i>"+data[0].astro.sunrise+"</section><br><br>";
+            let part2A = "<aside>"+data[0].hour[i].wind_mph+" meter <i class='fad fa-wind'></i><br>"+data[0].hour[i].wind_degree+"° in "+data[0].hour[i].wind_dir+" <i class='fad fa-wind'></i><br><br>"+data[0].astro.sunset+" <i class='fas fa-sunset'></i></aside>";
+            let part2B = "<section><i class='fas fa-sun' style='color: "+uvc+"; opacity: 0.87'></i> "+uv+"<br><i class='fas fa-dewpoint'></i> "+data[0].hour[i].humidity+"% <br><br><i class='fas fa-sunrise'></i>"+data[0].astro.sunrise+"</section><br><br>";
+
+            document.querySelector("#ub-weather-box2 > div").innerHTML += '<div><img src="'+data[0].hour[i].condition.text+'" width="60" height="60" border="0" id="ub-f-weather-img"><h3 id="ub-f-weather-c">'+part1A+'</h3> <p id="ub-f-weather-more">'+part1B+'</p></div>';
+            document.querySelector("#ub-weather-box3 > div").innerHTML += '<div><img src="'+data[1].hour[i].condition.text+'" width="60" height="60" border="0" id="ub-f-weather-img"><h3 id="ub-f-weather-c">'+part2A+'</h3> <p id="ub-f-weather-more">'+part2B+'</p></div>';
           }
         });
       }
