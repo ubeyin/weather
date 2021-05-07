@@ -367,7 +367,7 @@
           },
           error: function(e) {
             console.error(e);
-            new Ubeyin().error(e);
+            new PromptBoxes().error(e);
             document.getElementById("weather").style.display = "none";
             document.getElementById("weather-error").style.display = "block";
             document.getElementById("weather-error").innerHTML = "<font color='orange'><i class='fa fa-exclamation-triangle'></i> An unknown error happens<br> or your city is invalid.</font><br><br><br>Please click the change button to see the current weather in your area and enter your correct area name.";
@@ -415,7 +415,9 @@
         document.getElementById("ub-signup").style.display = "block";
       };
       document.getElementById("change-weather").onclick = function() {
-        new PromptBoxes().prompt(function(value) {
+        var pb = new PromptBoxes();
+
+        pb.prompt(function(value) {
           if (value != false) {
             weatherInit("q="+value);
           }
