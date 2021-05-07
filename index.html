@@ -415,7 +415,7 @@
         document.getElementById("ub-signup").style.display = "block";
       };
       document.getElementById("change-weather").onclick = function() {
-        new Ubal().prompt(function(value) {
+        new PromptBoxes().prompt(function(value) {
           if (value != false) {
             weatherInit("q="+value);
           }
