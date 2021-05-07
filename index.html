@@ -464,9 +464,9 @@
             document.getElementById("weather-error").innerHTML = "<font color='orange'><i class='fa fa-exclamation-triangle'></i> An unknown error happens<br> or your city is invalid.</font><br><br><br>Please click the change button to see the current weather in your area and enter your correct area name.";
           },
           hour: function(i, data) {
-            document.getElementById("ub-weather-box2").innerHTML += "<div>"+data[0].hour[i].condition.text+"</div><br>";
-            document.getElementById("ub-weather-box3").innerHTML += "<div>"+data[1].hour[i].condition.text+"</div><br>";
-            document.getElementById("ub-weather-box4").innerHTML += "<div>"+data[2].hour[i].condition.text+"</div><br>";
+            document.querySelector("#ub-weather-box2 > div").innerHTML += "<div>"+data[0].hour[i].condition.text+"</div><br>";
+            document.querySelector("#ub-weather-box3 > div").innerHTML += "<div>"+data[1].hour[i].condition.text+"</div><br>";
+            document.querySelector("#ub-weather-box4 > div").innerHTML += "<div>"+data[2].hour[i].condition.text+"</div><br>";
           }
         });
       }
