@@ -467,73 +467,172 @@
             document.getElementById("weather-error").innerHTML = "<font color='orange'><i class='fa fa-exclamation-triangle'></i> An unknown error happens<br> or your city is invalid.</font><br><br><br>Please click the change button to see the current weather in your area and enter your correct area name.";
           },
           hour: function(i, data) {
-            let part1A = "<aside>"+data[0].hour[i].wind_mph+" meter <i class='fad fa-wind'></i><br>"+data[0].hour[i].wind_degree+"° in "+data[0].hour[i].wind_dir+" <i class='fad fa-wind'></i><br><br>"+data[0].astro.sunset+" <i class='fas fa-sunset'></i></aside>";
-            let part1B = "<section><i class='fas fa-sun' style='color: "+uvc+"; opacity: 0.87'></i> "+uv+"<br><i class='fas fa-dewpoint'></i> "+data[0].hour[i].humidity+"% <br><br><i class='fas fa-sunrise'></i>"+data[0].astro.sunrise+"</section><br><br>";
-            let part2A = "<aside>"+data[0].hour[i].wind_mph+" meter <i class='fad fa-wind'></i><br>"+data[0].hour[i].wind_degree+"° in "+data[0].hour[i].wind_dir+" <i class='fad fa-wind'></i><br><br>"+data[0].astro.sunset+" <i class='fas fa-sunset'></i></aside>";
-            let part2B = "<section><i class='fas fa-sun' style='color: "+uvc+"; opacity: 0.87'></i> "+uv+"<br><i class='fas fa-dewpoint'></i> "+data[0].hour[i].humidity+"% <br><br><i class='fas fa-sunrise'></i>"+data[0].astro.sunrise+"</section><br><br>";
+            let uv, uvc, uv2, uvc2;
+            switch (data[0].hour[i].uv) {
+              case 1:
+                uv = "Low";
+                uvc = "Green";
+                break;
+              case 2:
+                uv = "Low";
+                uvc = "Green";
+                break;
+              case 3:
+                uv = "Moderate";
+                uvc = "#889b00";
+                break;
+              case 4:
+                uv = "Moderate";
+                uvc = "#889b00";
+                break;
+              case 5:
+                uv = "Moderate";
+                uvc = "#889b00";
+                break;
+              case 6:
+                uv = "High";
+                uvc = "Orange";
+                break;
+              case 7:
+                uv = "High";
+                uvc = "Orange";
+                break;
+              case 8:
+                uv = "Very High";
+                uvc = "#f94040";
+                break;
+              case 9:
+                uv = "Very High";
+                uvc = "#f94040";
+                break;
+              case 10:
+                uv = "Very High";
+                uvc = "#f94040";
+                break;
+              case 11:
+                uv = "Extreme";
+                uvc = "#8e048eb0";
+                break;
+              default:
+                uv = "";
+                uvc = "";
+              }
+              switch (data[1].hour[i].uv) {
+                case 1:
+                  uv2 = "Low";
+                  uvc2 = "Green";
+                  break;
+                case 2:
+                  uv2 = "Low";
+                  uvc2 = "Green";
+                  break;
+                case 3:
+                  uv2 = "Moderate";
+                  uvc2 = "#889b00";
+                  break;
+                case 4:
+                  uv2 = "Moderate";
+                  uvc2 = "#889b00";
+                  break;
+                case 5:
+                  uv2 = "Moderate";
+                  uvc2 = "#889b00";
+                  break;
+                case 6:
+                  uv2 = "High";
+                  uvc2 = "Orange";
+                  break;
+                case 7:
+                  uv2 = "High";
+                  uvc2 = "Orange";
+                  break;
+                case 8:
+                  uv2 = "Very High";
+                  uvc2 = "#f94040";
+                  break;
+                case 9:
+                  uv2 = "Very High";
+                  uvc2 = "#f94040";
+                  break;
+                case 10:
+                  uv2 = "Very High";
+                  uvc2 = "#f94040";
+                  break;
+                case 11:
+                  uv2 = "Extreme";
+                  uvc2 = "#8e048eb0";
+                  break;
+                default:
+                  uv2 = "";
+                  uvc2 = "";
+                }
+                let part1A = "<aside>"+data[0].hour[i].wind_mph+" meter <i class='fad fa-wind'></i><br>"+data[0].hour[i].wind_degree+"° in "+data[0].hour[i].wind_dir+" <i class='fad fa-wind'></i><br><br>"+data[0].astro.sunset+" <i class='fas fa-sunset'></i></aside>";
+                let part1B = "<section><i class='fas fa-sun' style='color: "+uvc+"; opacity: 0.87'></i> "+uv+"<br><i class='fas fa-dewpoint'></i> "+data[0].hour[i].humidity+"% <br><br><i class='fas fa-sunrise'></i>"+data[0].astro.sunrise+"</section><br><br>";
+                let part2A = "<aside>"+data[0].hour[i].wind_mph+" meter <i class='fad fa-wind'></i><br>"+data[0].hour[i].wind_degree+"° in "+data[0].hour[i].wind_dir+" <i class='fad fa-wind'></i><br><br>"+data[0].astro.sunset+" <i class='fas fa-sunset'></i></aside>";
+                let part2B = "<section><i class='fas fa-sun' style='color: "+uvc2+"; opacity: 0.87'></i> "+uv2+"<br><i class='fas fa-dewpoint'></i> "+data[0].hour[i].humidity+"% <br><br><i class='fas fa-sunrise'></i>"+data[0].astro.sunrise+"</section><br><br>";
 
-            document.querySelector("#ub-weather-box2 > div").innerHTML += '<div><img src="'+data[0].hour[i].condition.text+'" width="60" height="60" border="0" id="ub-f-weather-img"><h3 id="ub-f-weather-c">'+part1A+'</h3> <p id="ub-f-weather-more">'+part1B+'</p></div>';
-            document.querySelector("#ub-weather-box3 > div").innerHTML += '<div><img src="'+data[1].hour[i].condition.text+'" width="60" height="60" border="0" id="ub-f-weather-img"><h3 id="ub-f-weather-c">'+part2A+'</h3> <p id="ub-f-weather-more">'+part2B+'</p></div>';
+                document.querySelector("#ub-weather-box2 > div").innerHTML += '<div><img src="'+data[0].hour[i].condition.text+'" width="60" height="60" border="0" id="ub-f-weather-img"><h3 id="ub-f-weather-c">'+part1A+'</h3> <p id="ub-f-weather-more">'+part1B+'</p></div>';
+                document.querySelector("#ub-weather-box3 > div").innerHTML += '<div><img src="'+data[1].hour[i].condition.text+'" width="60" height="60" border="0" id="ub-f-weather-img"><h3 id="ub-f-weather-c">'+part2A+'</h3> <p id="ub-f-weather-more">'+part2B+'</p></div>';
+              }
+            });
+        }
+        Ub.gps().then({
+          load: function(lat, lon) {
+            weatherInit("q="+lat+", "+ lon)
+          },
+          error: function(b, a) {
+            console.error(b, a)
+            document.getElementById("weather-error").style.display = "block";
+            document.getElementById("weather").style.display = "none";
+            document.getElementById("weather-error").innerHTML = " <font color='orange'><i class='fa fa-exclamation-triangle'></i> "+a+"</font><br><br><br>Please click the change button and enter your area name to see the current weather in your area.";
           }
         });
-      }
-      Ub.gps().then({
-        load: function(lat, lon) {
-          weatherInit("q="+lat+", "+ lon)
-        },
-        error: function(b, a) {
-          console.error(b, a)
-          document.getElementById("weather-error").style.display = "block";
-          document.getElementById("weather").style.display = "none";
-          document.getElementById("weather-error").innerHTML = " <font color='orange'><i class='fa fa-exclamation-triangle'></i> "+a+"</font><br><br><br>Please click the change button and enter your area name to see the current weather in your area.";
+
+        document.getElementById("home").onclick = function() {
+          document.getElementById("ub-buttons-active").style.marginLeft = "32px";
+          document.getElementById("ub-home").style.display = "block";
+          document.getElementById("ub-about").style.display = "none";
+          document.getElementById("ub-policy").style.display = "none";
+          document.getElementById("ub-signup").style.display = "none";
+        };
+        document.getElementById("about").onclick = function() {
+          document.getElementById("ub-buttons-active").style.marginLeft = "110px";
+          document.getElementById("ub-home").style.display = "none";
+          document.getElementById("ub-about").style.display = "block";
+          document.getElementById("ub-policy").style.display = "none";
+          document.getElementById("ub-signup").style.display = "none";
+        };
+        document.getElementById("policy").onclick = function() {
+          document.getElementById("ub-buttons-active").style.marginLeft = "195px";
+          document.getElementById("ub-home").style.display = "none";
+          document.getElementById("ub-about").style.display = "none";
+          document.getElementById("ub-policy").style.display = "block";
+          document.getElementById("ub-signup").style.display = "none";
+        };
+        document.getElementById("signup").onclick = function() {
+          document.getElementById("ub-buttons-active").style.marginLeft = "275px";
+          document.getElementById("ub-home").style.display = "none";
+          document.getElementById("ub-about").style.display = "none";
+          document.getElementById("ub-policy").style.display = "none";
+          document.getElementById("ub-signup").style.display = "block";
+        };
+        document.getElementById("change-weather").onclick = function() {
+          var pb = new PromptBoxes();
+
+          pb.prompt(function(value) {
+            if (value != false) {
+              weatherInit("q="+value);
+            }
+          },
+            "Enter your city name, position or code");
         }
-      });
 
-      document.getElementById("home").onclick = function() {
-        document.getElementById("ub-buttons-active").style.marginLeft = "32px";
-        document.getElementById("ub-home").style.display = "block";
-        document.getElementById("ub-about").style.display = "none";
-        document.getElementById("ub-policy").style.display = "none";
-        document.getElementById("ub-signup").style.display = "none";
-      };
-      document.getElementById("about").onclick = function() {
-        document.getElementById("ub-buttons-active").style.marginLeft = "110px";
-        document.getElementById("ub-home").style.display = "none";
-        document.getElementById("ub-about").style.display = "block";
-        document.getElementById("ub-policy").style.display = "none";
-        document.getElementById("ub-signup").style.display = "none";
-      };
-      document.getElementById("policy").onclick = function() {
-        document.getElementById("ub-buttons-active").style.marginLeft = "195px";
-        document.getElementById("ub-home").style.display = "none";
-        document.getElementById("ub-about").style.display = "none";
-        document.getElementById("ub-policy").style.display = "block";
-        document.getElementById("ub-signup").style.display = "none";
-      };
-      document.getElementById("signup").onclick = function() {
-        document.getElementById("ub-buttons-active").style.marginLeft = "275px";
-        document.getElementById("ub-home").style.display = "none";
-        document.getElementById("ub-about").style.display = "none";
-        document.getElementById("ub-policy").style.display = "none";
-        document.getElementById("ub-signup").style.display = "block";
-      };
-      document.getElementById("change-weather").onclick = function() {
-        var pb = new PromptBoxes();
-
-        pb.prompt(function(value) {
-          if (value != false) {
-            weatherInit("q="+value);
-          }
-        },
-          "Enter your city name, position or code");
-      }
-
-      let url = "https://ubeyin.github.io";
-      Ub.fetch(url).then("text()", function(d) {
-        //  if (window.location.href === url) {
-        document.getElementById("ub-spinner").style.display = "none";
-        //  }
-      });
-    </script>
-  </body>
-</html>
+        let url = "https://ubeyin.github.io";
+        Ub.fetch(url).then("text()", function(d) {
+          //  if (window.location.href === url) {
+          document.getElementById("ub-spinner").style.display = "none";
+          //  }
+        });
+      </script>
+      </body>
+    </html>
