@@ -635,13 +635,13 @@
         }
 
         let url = "https://ubeyin.github.io";
-        Ub.fetch(url).then("text()", function(d) {
-          setTimeout(function() {
-            //  if (window.location.href === url) {
+
+        setTimeout(function() {
+          if (window.location.href === url) {
             document.getElementById("ub-spinner").style.display = "none";
-            //  }
-          }, 2000);
-        });
+          }
+        }, 2000);
+
       </script>
       </body>
     </html>
