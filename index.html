@@ -401,6 +401,670 @@
   <script src="https://ubeyin.github.io/dist/alertbox/alert.min.js" type="text/javascript" charset="utf-8"></script>
 
   <script type="text/javascript" charset="utf-8">
+    /*
+ * Ubeyin Stack | ustack.js
+ * Source UR: https://ubeyin.github.io/ustack/ustack.min.js
+ * Developed by Ubeyin LLC. Copyright © 2021 by us.
+*/
+
+    /**
+    * @Constructor
+    * @Ub
+    * @param {String}
+    */
+    Ub = function(select) {
+      if (! (this instanceof Ub)) {
+        return new Ub(select);
+      }
+      this.el = document.querySelectorAll(select);
+      return this;
+    };
+
+    /**
+    * @Constructor
+    * @copyToClipboard
+    * @param {String}
+    */
+    Ub.copyToClipboard = function (val) {
+      if (window.clipboardData && window.clipboardData.setData) {
+        return window.clipboardData.setData("text", val);
+      } else if (document.queryCommandSupported && document.queryCommandSupported("copy")) {
+        var valarea = document.createElement("textarea");
+        valarea.valContent = val;
+        valarea.style.opacity = 0;
+        valarea.style.position = "fixed";
+        document.body.appendChild(valarea);
+        valarea.select();
+        try {
+          return document.execCommand("copy");
+        }
+        catch (ex) {
+          console.error("'Copy to clipboard failed'");
+          return false;
+        }
+        finally {
+          document.body.removeChild(valarea);
+          console.log("'Copied to clipboard'");
+        }
+      }
+    };
+
+    /**
+    * @Constructor
+    * @navigator
+    * @param {String}
+    */
+    Ub.navigator = function (type) {
+      if (type == "device") {
+        let device = "Unknown";
+        const ua = {
+          "Generic Linux": /Linux/i,
+          "Android": /Android/i,
+          "BlackBerry": /BlackBerry/i,
+          "Bluebird": /EF500/i,
+          "Chrome OS": /CrOS/i,
+          "Datalogic": /DL-AXIS/i,
+          "Honeywell": /CT50/i,
+          "iPad": /iPad/i,
+          "iPhone": /iPhone/i,
+          "iPod": /iPod/i,
+          "macOS": /Macintosh/i,
+          "Windows": /IEMobile|Windows/i,
+          "Zebra": /TC70|TC55/i,
+          "Opera": /Opera Mini/i
+        };
+        Object.keys(ua).map(v => navigator.userAgent.match(ua[v]) && (device = v));
+        return device;
+      }
+    };
+
+    /**
+    * @Constructor
+    * @firebase
+    * @param {String}
+    */
+    Ub.firebase = function(config) {
+      firebase.initializeApp(config);
+      firebase.analytics();
+
+      // Authentication
+      this.auth = function() {
+        firebase.initializeApp(x);
+        firebase.analytics();
+        return {
+          // Create User With Email And Password
+          signUp: function(email, password, {
+            on: {
+              load, error
+            }}) {
+            firebase.auth().createUserWithEmailAndPassword(email, password)
+            .then((data) => {
+              return load(data);
+            }).catch(function(err) {
+              return error(err);
+            });
+          },
+          // Sign In With Email And Password
+          signIn: function(email, password, {
+            on: {
+              load, error
+            }}) {
+            firebase.auth().signInWithEmailAndPassword(email, password)
+            .then((data) => {
+              return load(data);
+            }).catch(function(err) {
+              return error(err);
+            });
+          },
+          // Sign Out
+          signOut: function( {
+            on: {
+              load, error
+            }}) {
+            firebase.auth().signOut().then(() => {
+              return load();
+            }).catch((error) => {
+              return error(error);
+            });
+          },
+          // User Change States
+          user: function( {
+            on: {
+              user, guest
+            }}) {
+            firebase.auth().onAuthStateChanged((users) => {
+              if (users) {
+                return user(users);
+              } else {
+                return guest();
+              }
+            });
+          },
+          userData: firebase.auth().currentUser ? firebase.auth().currentUser: false
+        };
+      };
+
+      // Database
+      this.db = function(x) {
+        return {
+          // Add Child
+          add: function(val, {
+            on: {
+              load,
+              error
+            }}) {
+            firebase.database().ref(x).set(val).then(function(data) {
+              return load(val);
+            }).catch(function(err) {
+              return error(err);
+            });
+          },
+          // Get Child
+          get: function( {
+            on: {
+              load,
+              error
+            }}) {
+            firebase.database().ref(x).get().then(function(data) {
+              return load(data.val());
+            }).catch(function(err) {
+              return error(err);
+            });
+          },
+          // Update Child
+          set: function(val, {
+            on: {
+              load,
+              error
+            }}) {
+            firebase.database().ref(x).update(val).then((data) => {
+              return load(val);
+            }).catch(function(err) {
+              return error(err);
+            });
+          },
+          // Delete Child
+          delete: function(val, {
+            on: {
+              load,
+              error
+            }}) {
+            firebase.database().ref(x).delete().then(() => {
+              return load();
+            }).catch(function(err) {
+              return error(err);
+            });
+          },
+        };
+      };
+    };
+
+    /**
+    * @Constructor
+    * @ajax
+    * @param {String}
+    */
+    Ub.ajax = function(ajax_option) {
+      let ajax_setting;
+      let method, url, data;
+      let ajax_request;
+      let fn = {};
+
+      function isEmpty(object) {
+        for (let x in object) {
+          if (object.hasOwnProperty(x)) {
+            return false;
+          }
+        }
+        return true;
+      }
+      function urlEncode(object) {
+        let urlData = '';
+        if (!object) {
+          return '';
+        }
+        for (let x in object) {
+          urlData = urlData + x + '=' + encodeURIComponent(object[x]) + '&';
+        }
+        urlData = urlData.substr(0, (urlData.length - 1));
+        return urlData;
+      }
+      if (ajax_option) {
+        ajax_setting = ajax_option;
+      } else {
+        throw new TypeError('Failed to load XMLHttpRequest. Ajax arguments are required.');
+      }
+      if (ajax_setting.method) {
+        method = ajax_setting.method;
+      } else {
+        throw new TypeError('Failed to load XMLHttpRequest. Ajax methods are required.');
+      }
+      if (ajax_setting.url) {
+        url = ajax_setting.url;
+        if (ajax_setting.cors == "anywhere") {
+          url = "https://cors-anywhere.herokuapp.com/"+ajax_setting.url;
+        }
+      } else {
+        throw new TypeError('Failed to load XMLHttpRequest. Ajax urls are required.');
+      }
+
+      data = ajax_setting.data || '';
+      if (ajax_setting.method === 'GET' && data && !isEmpty(data)) {
+        url = url + '?' + urlEncode(data);
+      }
+
+      try {
+        ajax_request = new XMLHttpRequest();
+      } catch (e) {
+        try {
+          ajax_request = new ActiveXObject('MSXML2.XMLHTTP');
+        } catch(e) {
+          ajax_request = new ActiveXObject('Microsoft.XMLHTTP');
+        }
+      }
+      ajax_request.open(method, url);
+      if (ajax_setting.requestHeader) {
+        for (let key in ajax_setting.setRequestHeader) {
+          ajax_request.setRequestHeader(key, ajax_setting.setRequestHeader[key]);
+        }
+      }
+      if (ajax_setting.credential) {
+        ajax_request.withCredentials = true;
+      }
+
+      ajax_request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+      ajax_request.send(urlEncode(data));
+      fn = {
+        onload: function (success) {
+          // handle IE8 IE9 CORS
+          if (typeof(XDomainRequest) !== 'undefined') {
+            let host = location.host,
+            matchUrl = url.replace('https://', '').replace('http://', '');
+            matchUrl = matchUrl.slice(0, matchUrl.indexOf('/'));
+            if (url.indexOf('//') === 0 || matchUrl !== host) {
+              let xdr = new XDomainRequest();
+              xdr.open(method, url);
+              xdr.onprogress = function () {
+                // progress
+              };
+              xdr.ontimeout = function () {
+                // timeout
+              };
+              xdr.onerror = function () {
+                // error
+              };
+              xdr.onload = function() {
+                if (success) {
+                  success(JSON.parse(xdr.responseText));
+                }
+              };
+              setTimeout(function () {
+                xdr.send();
+              }, 0);
+
+              return;
+            }
+          }
+          // handle IE8 IE9 CORS end
+          ajax_request.onreadystatechange = function () {
+            if (success) {
+
+              if (ajax_request.readyState === 4) {
+                if (ajax_request.status >= 200 && ajax_request.status <= 400) {
+                  let section;
+                  switch (ajax_setting.section) {
+                    case 'object':
+                      section = JSON.parse(ajax_request.responseText);
+                      break;
+                    case 'xml':
+                      section = ajax_request.responseXML;
+                      break;
+                    case 'none':
+                      section = ajax_request;
+                      break;
+                    case 'text':
+                      section = ajax_request.responseText;
+                      break;
+                    default:
+                      section = ajax_request;
+                      break;
+                  }
+                  if (success) {
+                    success(section);
+                  }
+                } else {
+                  console.error(ajax_request.status+" Error!! Somethings is broken or error. ", ajax_request);
+                }
+              }
+            } else {
+              throw new TypeError('Failed to load XMLHttpRequest. Only 1 callbacks are required.');
+            }
+          };
+        },
+        onerror: function (error) {
+          ajax_request.onerror = function() {
+            if (error) {
+              error(ajax_request.status, ajax_request.responseText);
+            }
+          };
+        }
+      };
+      return fn;
+    };
+
+    /**
+    * @Constructor
+    * @gps
+    * @param {String}
+    */
+    Ub.gps = function( {
+      load, error
+    }) {
+      const getPositionErrorMessage = code => {
+        switch (code) {
+          case 1:
+            return 'Permission denied.';
+            break;
+          case 2:
+            return 'Position unavailable.';
+            break;
+          case 3:
+            return 'Timeout reached.';
+            break;
+          default:
+            return 'An unknown error';
+            break;
+        }
+      }
+      if ('geolocation' in navigator === false) {
+        console.error(new TypeError('Geolocation is not supported by your browser.'));
+      }
+      return navigator.geolocation.getCurrentPosition(function (position) {
+        let req = Ub.ajax({
+          method: "GET",
+          url: "https://us1.locationiq.com/v1/reverse.php?key=pk.841faf5c95235f9459953b664d1ec98c&lat=" + position.coords.latitude + "&lon=" + position.coords.longitude + "&format=json",
+          section: "object"
+        });
+        req.onload(function(data) {
+          result = data.display_name;
+          return load(position.coords.latitude, position.coords.longitude, data.display_name, position);
+        });
+        req.onerror(function(e) {
+          return load(position.coords.latitude, position.coords.longitude, "Not found", position);
+        });
+      }, function(e) {
+        return error(getPositionErrorMessage(e.code));
+      });
+    };
+
+    /**
+    * @Constructor
+    * @window
+    * @param {String}
+    */
+    Ub.window = function () {
+      let fn = {
+        size: function(wdw) {
+          let mobile,
+          tablet,
+          laptop,
+          ipad,
+          dekstop,
+          otherwise;
+          mobile = wdw.mobile;
+          tablet = wdw.tablet;
+          laptop = wdw.laptop;
+          ipad = wdw.ipad;
+          dekstop = wdw.dekstop;
+          otherwise = wdw.other;
+
+          if (mobile || tablet || laptop || ipad || dekstop || otherwise) {
+            let onl = function() {
+              if (window.innerWidth <= 400) {
+                if (mobile) {
+                  // mobile window
+                  mobile(window);
+                }
+              } else if (window.innerWidth <= 870 && window.innerWidth >= 400) {
+                if (tablet) {
+                  // tablet window
+                  tablet(window);
+                }
+              } else if (window.innerWidth <= 970 && window.innerWidth >= 870) {
+                if (ipad) {
+                  // ipad window
+                  ipad(window);
+                }
+              } else if (window.innerWidth <= 1100 && window.innerWidth >= 970) {
+                if (laptop) {
+                  // laptop window
+                  laptop(window);
+                }
+              } else if (window.innerWidth <= 1200 && window.innerWidth >= 1100) {
+                if (dekstop) {
+                  // dekstop window
+                  dekstop(window);
+                }
+              } else {
+                if (otherwise) {
+                  // other window
+                  otherwise(window);
+                }
+              }
+            };
+            if (document.body) onl();
+            else window.onload = onl;
+          } else {
+            throw new TypeError("Failed to execute window. Only 1 arguments are required, but only 0 arguments are present.");
+          }
+        }
+      };
+      return fn;
+    };
+
+    /**
+    * @Constructor
+    * @alert
+    * @param {String}
+    */
+    Ub.alert = function( {
+      title, align, message, button
+    }) {
+      let styles = document.createElement("style");
+      styles.type = "text/css";
+      styles.innerHTML = `
+      @import url("https://fonts.googleapis.com/css?family=Ubuntu");
+      alert, alert * {
+      font-family: "Ubuntu";
+      }
+      alert {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgb(0,0,0,0.3);
+      color: #333;
+      text-align: left;
+      }
+      alert > top {
+      position: fixed;
+      top: 20px;
+      left: 0;
+      right: 0;
+      }
+      alert > middle {
+      position: fixed;
+      top: calc(40% - 2em);
+      left: 0;
+      right: 0;
+      }
+      alert > bottom {
+      position: fixed;
+      bottom: 20px;
+      left: 0;
+      right: 0;
+      }
+      alert > top, alert > middle, alert > bottom {
+      width: 85%;
+      height: auto;
+      padding: 20px;
+      background: #fff;
+      margin: auto;
+      animation: 0.15s alert-fade-in linear;
+      }
+      alert top > title, alert middle > title, alert bottom > title {
+      font-size: 20px;
+      display: block;
+      margin-bottom: 10px;
+      }
+      alert top > message, alert middle > message, alert bottom > message {
+      font-size: 17px;
+      display: block;
+      margin-bottom: 10px;
+      }
+      alert top > button, alert middle > button, alert bottom > button {
+      font-size: 17px;
+      width: auto;
+      height: auto;
+      padding: 7px;
+      padding-left: 15px;
+      padding-right: 15px;
+      background: #f5072d;
+      color: white;
+      border-radius: 0.3rem;
+      margin: auto;
+      border: none;
+      outline: none;
+      float: right;
+      }
+      top, bottom, middle {
+      border-radius: 0.3rem;
+      }
+      @keyframes alert-fade-in {
+      from {
+      opacity: 0;
+      transform: scale(0.6);
+      }
+      to {
+      opacity: 1;
+      transform: scale(1.0);
+      }
+      }
+      @keyframes alert-fade-out {
+      from {
+      opacity: 1;
+      transform: scale(1.0);
+      }
+      to {
+      opacity: 0;
+      transform: scale(0.6);
+      }
+      }
+      `;
+      if (title && message && button && align) {
+        let alertDiv = document.createElement("alert");
+        let alertTop = document.createElement("top");
+        let alertMiddle = document.createElement("middle");
+        let alertBottom = document.createElement("bottom");
+        let alertTitle = document.createElement("title");
+        let alertMessage = document.createElement("message");
+        let alertButton = document.createElement("button");
+
+        alertTitle.innerHTML = title;
+        alertMessage.innerHTML = message;
+        alertButton.innerHTML = button;
+        alertButton.onclick = function() {
+          if (align == "top") {
+            alertTop.style.animation = "0.15s alert-fade-out linear";
+            setTimeout(function() {
+              alertDiv.remove();
+            }, 151);
+          } else if (align == "center" || align == null) {
+            alertMiddle.style.animation = "0.15s alert-fade-out linear";
+            setTimeout(function() {
+              alertDiv.remove();
+            }, 151);
+          } else if (align == "bottom") {
+            alertBottom.style.animation = "0.15s alert-fade-out linear";
+            setTimeout(function() {
+              alertDiv.remove();
+            }, 151);
+          } else {
+            throw new TypeError("Alert aligns must be top|middle|bottom, but not found.");
+          }
+        }
+        let onloads = function() {
+          document.body.appendChild(alertDiv);
+          if (align == "top") {
+            alertDiv.appendChild(alertTop);
+            alertTop.appendChild(alertTitle);
+            alertTop.appendChild(alertMessage);
+            alertTop.appendChild(alertButton);
+          } else if (align == "center" || align == null) {
+            alertDiv.appendChild(alertMiddle);
+            alertMiddle.appendChild(alertTitle);
+            alertMiddle.appendChild(alertMessage);
+            alertMiddle.appendChild(alertButton);
+          } else if (align == "bottom") {
+            alertDiv.appendChild(alertBottom);
+            alertBottom.appendChild(alertTitle);
+            alertBottom.appendChild(alertMessage);
+            alertBottom.appendChild(alertButton);
+          } else {
+            throw new TypeError("Alert aligns must be top|center|bottom, but not found.");
+          }
+        };
+        if (document.body) onloads()
+        else window.onload = onloads()
+      } else {
+        throw new TypeError("Failed to create alerts, 4 arguments must be required.");
+      }
+      let onl = function() {
+        document.head.appendChild(styles);
+      };
+      if (document.body) onl()
+      else window.onload = onl;
+    };
+
+    /**
+    * @Constructor
+    * @load
+    * @param {String}
+    */
+    Ub.load = function (reg) {
+      if ("function" === typeof reg) {
+        if (document.body) {
+          reg(document.body);
+        } else {
+          window.onload = function () {
+            return reg(window);
+          };
+        }
+      } else {
+        throw new TypeError("Cannot read property load() of undefined");
+      }
+    }
+
+    Ub.gps({
+      load: function(a) {
+        console.log(a)
+      },
+      error: function(e) {
+        console.error(e)
+      }
+    });
+
+
+    /** All modules :
+    * firebase, auth, db
+    * window, navigator, load
+    * gps, ajax, alert
+    * copyToClipboard
+    **/
+  </script>
+  <script type="text/javascript" charset="utf-8">
     if ("undefined" == typeof Ubeyin) throw new TypeError("Ustack JS are required.");
     function weatherInit(q, err) {
       new Ubeyin().weather({
@@ -643,669 +1307,5 @@
         }, 2000);
 
       </script>
-        <script type="text/javascript" charset="utf-8">
-          /*
- * Ubeyin Stack | ustack.js
- * Source UR: https://ubeyin.github.io/ustack/ustack.min.js
- * Developed by Ubeyin LLC. Copyright © 2021 by us.
-*/
-
-          /**
-          * @Constructor
-          * @Ub
-          * @param {String}
-          */
-          Ub = function(select) {
-            if (! (this instanceof Ub)) {
-              return new Ub(select);
-            }
-            this.el = document.querySelectorAll(select);
-            return this;
-          };
-
-          /**
-          * @Constructor
-          * @copyToClipboard
-          * @param {String}
-          */
-          Ub.copyToClipboard = function (val) {
-            if (window.clipboardData && window.clipboardData.setData) {
-              return window.clipboardData.setData("text", val);
-            } else if (document.queryCommandSupported && document.queryCommandSupported("copy")) {
-              var valarea = document.createElement("textarea");
-              valarea.valContent = val;
-              valarea.style.opacity = 0;
-              valarea.style.position = "fixed";
-              document.body.appendChild(valarea);
-              valarea.select();
-              try {
-                return document.execCommand("copy");
-              }
-              catch (ex) {
-                console.error("'Copy to clipboard failed'");
-                return false;
-              }
-              finally {
-                document.body.removeChild(valarea);
-                console.log("'Copied to clipboard'");
-              }
-            }
-          };
-
-          /**
-          * @Constructor
-          * @navigator
-          * @param {String}
-          */
-          Ub.navigator = function (type) {
-            if (type == "device") {
-              let device = "Unknown";
-              const ua = {
-                "Generic Linux": /Linux/i,
-                "Android": /Android/i,
-                "BlackBerry": /BlackBerry/i,
-                "Bluebird": /EF500/i,
-                "Chrome OS": /CrOS/i,
-                "Datalogic": /DL-AXIS/i,
-                "Honeywell": /CT50/i,
-                "iPad": /iPad/i,
-                "iPhone": /iPhone/i,
-                "iPod": /iPod/i,
-                "macOS": /Macintosh/i,
-                "Windows": /IEMobile|Windows/i,
-                "Zebra": /TC70|TC55/i,
-                "Opera": /Opera Mini/i
-              };
-              Object.keys(ua).map(v => navigator.userAgent.match(ua[v]) && (device = v));
-              return device;
-            }
-          };
-
-          /**
-          * @Constructor
-          * @firebase
-          * @param {String}
-          */
-          Ub.firebase = function(config) {
-            firebase.initializeApp(config);
-            firebase.analytics();
-
-            // Authentication
-            this.auth = function() {
-              firebase.initializeApp(x);
-              firebase.analytics();
-              return {
-                // Create User With Email And Password
-                signUp: function(email, password, {
-                  on: {
-                    load, error
-                  }}) {
-                  firebase.auth().createUserWithEmailAndPassword(email, password)
-                  .then((data) => {
-                    return load(data);
-                  }).catch(function(err) {
-                    return error(err);
-                  });
-                },
-                // Sign In With Email And Password
-                signIn: function(email, password, {
-                  on: {
-                    load, error
-                  }}) {
-                  firebase.auth().signInWithEmailAndPassword(email, password)
-                  .then((data) => {
-                    return load(data);
-                  }).catch(function(err) {
-                    return error(err);
-                  });
-                },
-                // Sign Out
-                signOut: function( {
-                  on: {
-                    load, error
-                  }}) {
-                  firebase.auth().signOut().then(() => {
-                    return load();
-                  }).catch((error) => {
-                    return error(error);
-                  });
-                },
-                // User Change States
-                user: function( {
-                  on: {
-                    user, guest
-                  }}) {
-                  firebase.auth().onAuthStateChanged((users) => {
-                    if (users) {
-                      return user(users);
-                    } else {
-                      return guest();
-                    }
-                  });
-                },
-                userData: firebase.auth().currentUser ? firebase.auth().currentUser: false
-              };
-            };
-
-            // Database
-            this.db = function(x) {
-              return {
-                // Add Child
-                add: function(val, {
-                  on: {
-                    load,
-                    error
-                  }}) {
-                  firebase.database().ref(x).set(val).then(function(data) {
-                    return load(val);
-                  }).catch(function(err) {
-                    return error(err);
-                  });
-                },
-                // Get Child
-                get: function( {
-                  on: {
-                    load,
-                    error
-                  }}) {
-                  firebase.database().ref(x).get().then(function(data) {
-                    return load(data.val());
-                  }).catch(function(err) {
-                    return error(err);
-                  });
-                },
-                // Update Child
-                set: function(val, {
-                  on: {
-                    load,
-                    error
-                  }}) {
-                  firebase.database().ref(x).update(val).then((data) => {
-                    return load(val);
-                  }).catch(function(err) {
-                    return error(err);
-                  });
-                },
-                // Delete Child
-                delete: function(val, {
-                  on: {
-                    load,
-                    error
-                  }}) {
-                  firebase.database().ref(x).delete().then(() => {
-                    return load();
-                  }).catch(function(err) {
-                    return error(err);
-                  });
-                },
-              };
-            };
-          };
-
-          /**
-          * @Constructor
-          * @ajax
-          * @param {String}
-          */
-          Ub.ajax = function(ajax_option) {
-            let ajax_setting;
-            let method, url, data;
-            let ajax_request;
-            let fn = {};
-
-            function isEmpty(object) {
-              for (let x in object) {
-                if (object.hasOwnProperty(x)) {
-                  return false;
-                }
-              }
-              return true;
-            }
-            function urlEncode(object) {
-              let urlData = '';
-              if (!object) {
-                return '';
-              }
-              for (let x in object) {
-                urlData = urlData + x + '=' + encodeURIComponent(object[x]) + '&';
-              }
-              urlData = urlData.substr(0, (urlData.length - 1));
-              return urlData;
-            }
-            if (ajax_option) {
-              ajax_setting = ajax_option;
-            } else {
-              throw new TypeError('Failed to load XMLHttpRequest. Ajax arguments are required.');
-            }
-            if (ajax_setting.method) {
-              method = ajax_setting.method;
-            } else {
-              throw new TypeError('Failed to load XMLHttpRequest. Ajax methods are required.');
-            }
-            if (ajax_setting.url) {
-              url = ajax_setting.url;
-              if (ajax_setting.cors == "anywhere") {
-                url = "https://cors-anywhere.herokuapp.com/"+ajax_setting.url;
-              }
-            } else {
-              throw new TypeError('Failed to load XMLHttpRequest. Ajax urls are required.');
-            }
-
-            data = ajax_setting.data || '';
-            if (ajax_setting.method === 'GET' && data && !isEmpty(data)) {
-              url = url + '?' + urlEncode(data);
-            }
-
-            try {
-              ajax_request = new XMLHttpRequest();
-            } catch (e) {
-              try {
-                ajax_request = new ActiveXObject('MSXML2.XMLHTTP');
-              } catch(e) {
-                ajax_request = new ActiveXObject('Microsoft.XMLHTTP');
-              }
-            }
-            ajax_request.open(method, url);
-            if (ajax_setting.requestHeader) {
-              for (let key in ajax_setting.setRequestHeader) {
-                ajax_request.setRequestHeader(key, ajax_setting.setRequestHeader[key]);
-              }
-            }
-            if (ajax_setting.credential) {
-              ajax_request.withCredentials = true;
-            }
-
-            ajax_request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-
-            ajax_request.send(urlEncode(data));
-            fn = {
-              onload: function (success) {
-                // handle IE8 IE9 CORS
-                if (typeof(XDomainRequest) !== 'undefined') {
-                  let host = location.host,
-                  matchUrl = url.replace('https://', '').replace('http://', '');
-                  matchUrl = matchUrl.slice(0, matchUrl.indexOf('/'));
-                  if (url.indexOf('//') === 0 || matchUrl !== host) {
-                    let xdr = new XDomainRequest();
-                    xdr.open(method, url);
-                    xdr.onprogress = function () {
-                      // progress
-                    };
-                    xdr.ontimeout = function () {
-                      // timeout
-                    };
-                    xdr.onerror = function () {
-                      // error
-                    };
-                    xdr.onload = function() {
-                      if (success) {
-                        success(JSON.parse(xdr.responseText));
-                      }
-                    };
-                    setTimeout(function () {
-                      xdr.send();
-                    }, 0);
-
-                    return;
-                  }
-                }
-                // handle IE8 IE9 CORS end
-                ajax_request.onreadystatechange = function () {
-                  if (success) {
-
-                    if (ajax_request.readyState === 4) {
-                      if (ajax_request.status >= 200 && ajax_request.status <= 400) {
-                        let section;
-                        switch (ajax_setting.section) {
-                          case 'object':
-                            section = JSON.parse(ajax_request.responseText);
-                            break;
-                          case 'xml':
-                            section = ajax_request.responseXML;
-                            break;
-                          case 'none':
-                            section = ajax_request;
-                            break;
-                          case 'text':
-                            section = ajax_request.responseText;
-                            break;
-                          default:
-                            section = ajax_request;
-                            break;
-                        }
-                        if (success) {
-                          success(section);
-                        }
-                      } else {
-                        console.error(ajax_request.status+" Error!! Somethings is broken or error. ", ajax_request);
-                      }
-                    }
-                  } else {
-                    throw new TypeError('Failed to load XMLHttpRequest. Only 1 callbacks are required.');
-                  }
-                };
-              },
-              onerror: function (error) {
-                ajax_request.onerror = function() {
-                  if (error) {
-                    error(ajax_request.status, ajax_request.responseText);
-                  }
-                };
-              }
-            };
-            return fn;
-          };
-
-          /**
-          * @Constructor
-          * @gps
-          * @param {String}
-          */
-          Ub.gps = function( {
-            load, error
-          }) {
-            const getPositionErrorMessage = code => {
-              switch (code) {
-                case 1:
-                  return 'Permission denied.';
-                  break;
-                case 2:
-                  return 'Position unavailable.';
-                  break;
-                case 3:
-                  return 'Timeout reached.';
-                  break;
-                default:
-                  return 'An unknown error';
-                  break;
-              }
-            }
-            if ('geolocation' in navigator === false) {
-              console.error(new TypeError('Geolocation is not supported by your browser.'));
-            }
-            return navigator.geolocation.getCurrentPosition(function (position) {
-              let req = Ub.ajax({
-                method: "GET",
-                url: "https://us1.locationiq.com/v1/reverse.php?key=pk.841faf5c95235f9459953b664d1ec98c&lat=" + position.coords.latitude + "&lon=" + position.coords.longitude + "&format=json",
-                section: "object"
-              });
-              req.onload(function(data) {
-                result = data.display_name;
-                return load(position.coords.latitude, position.coords.longitude, data.display_name, position);
-              });
-              req.onerror(function(e) {
-                return load(position.coords.latitude, position.coords.longitude, "Not found", position);
-              });
-            }, function(e) {
-              return error(getPositionErrorMessage(e.code));
-            });
-          };
-
-          /**
-          * @Constructor
-          * @window
-          * @param {String}
-          */
-          Ub.window = function () {
-            let fn = {
-              size: function(wdw) {
-                let mobile,
-                tablet,
-                laptop,
-                ipad,
-                dekstop,
-                otherwise;
-                mobile = wdw.mobile;
-                tablet = wdw.tablet;
-                laptop = wdw.laptop;
-                ipad = wdw.ipad;
-                dekstop = wdw.dekstop;
-                otherwise = wdw.other;
-
-                if (mobile || tablet || laptop || ipad || dekstop || otherwise) {
-                  let onl = function() {
-                    if (window.innerWidth <= 400) {
-                      if (mobile) {
-                        // mobile window
-                        mobile(window);
-                      }
-                    } else if (window.innerWidth <= 870 && window.innerWidth >= 400) {
-                      if (tablet) {
-                        // tablet window
-                        tablet(window);
-                      }
-                    } else if (window.innerWidth <= 970 && window.innerWidth >= 870) {
-                      if (ipad) {
-                        // ipad window
-                        ipad(window);
-                      }
-                    } else if (window.innerWidth <= 1100 && window.innerWidth >= 970) {
-                      if (laptop) {
-                        // laptop window
-                        laptop(window);
-                      }
-                    } else if (window.innerWidth <= 1200 && window.innerWidth >= 1100) {
-                      if (dekstop) {
-                        // dekstop window
-                        dekstop(window);
-                      }
-                    } else {
-                      if (otherwise) {
-                        // other window
-                        otherwise(window);
-                      }
-                    }
-                  };
-                  if (document.body) onl();
-                  else window.onload = onl;
-                } else {
-                  throw new TypeError("Failed to execute window. Only 1 arguments are required, but only 0 arguments are present.");
-                }
-              }
-            };
-            return fn;
-          };
-
-          /**
-          * @Constructor
-          * @alert
-          * @param {String}
-          */
-          Ub.alert = function( {
-            title, align, message, button
-          }) {
-            let styles = document.createElement("style");
-            styles.type = "text/css";
-            styles.innerHTML = `
-            @import url("https://fonts.googleapis.com/css?family=Ubuntu");
-            alert, alert * {
-            font-family: "Ubuntu";
-            }
-            alert {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgb(0,0,0,0.3);
-            color: #333;
-            text-align: left;
-            }
-            alert > top {
-            position: fixed;
-            top: 20px;
-            left: 0;
-            right: 0;
-            }
-            alert > middle {
-            position: fixed;
-            top: calc(40% - 2em);
-            left: 0;
-            right: 0;
-            }
-            alert > bottom {
-            position: fixed;
-            bottom: 20px;
-            left: 0;
-            right: 0;
-            }
-            alert > top, alert > middle, alert > bottom {
-            width: 85%;
-            height: auto;
-            padding: 20px;
-            background: #fff;
-            margin: auto;
-            animation: 0.15s alert-fade-in linear;
-            }
-            alert top > title, alert middle > title, alert bottom > title {
-            font-size: 20px;
-            display: block;
-            margin-bottom: 10px;
-            }
-            alert top > message, alert middle > message, alert bottom > message {
-            font-size: 17px;
-            display: block;
-            margin-bottom: 10px;
-            }
-            alert top > button, alert middle > button, alert bottom > button {
-            font-size: 17px;
-            width: auto;
-            height: auto;
-            padding: 7px;
-            padding-left: 15px;
-            padding-right: 15px;
-            background: #f5072d;
-            color: white;
-            border-radius: 0.3rem;
-            margin: auto;
-            border: none;
-            outline: none;
-            float: right;
-            }
-            top, bottom, middle {
-            border-radius: 0.3rem;
-            }
-            @keyframes alert-fade-in {
-            from {
-            opacity: 0;
-            transform: scale(0.6);
-            }
-            to {
-            opacity: 1;
-            transform: scale(1.0);
-            }
-            }
-            @keyframes alert-fade-out {
-            from {
-            opacity: 1;
-            transform: scale(1.0);
-            }
-            to {
-            opacity: 0;
-            transform: scale(0.6);
-            }
-            }
-            `;
-            if (title && message && button && align) {
-              let alertDiv = document.createElement("alert");
-              let alertTop = document.createElement("top");
-              let alertMiddle = document.createElement("middle");
-              let alertBottom = document.createElement("bottom");
-              let alertTitle = document.createElement("title");
-              let alertMessage = document.createElement("message");
-              let alertButton = document.createElement("button");
-
-              alertTitle.innerHTML = title;
-              alertMessage.innerHTML = message;
-              alertButton.innerHTML = button;
-              alertButton.onclick = function() {
-                if (align == "top") {
-                  alertTop.style.animation = "0.15s alert-fade-out linear";
-                  setTimeout(function() {
-                    alertDiv.remove();
-                  }, 151);
-                } else if (align == "center" || align == null) {
-                  alertMiddle.style.animation = "0.15s alert-fade-out linear";
-                  setTimeout(function() {
-                    alertDiv.remove();
-                  }, 151);
-                } else if (align == "bottom") {
-                  alertBottom.style.animation = "0.15s alert-fade-out linear";
-                  setTimeout(function() {
-                    alertDiv.remove();
-                  }, 151);
-                } else {
-                  throw new TypeError("Alert aligns must be top|middle|bottom, but not found.");
-                }
-              }
-              let onloads = function() {
-                document.body.appendChild(alertDiv);
-                if (align == "top") {
-                  alertDiv.appendChild(alertTop);
-                  alertTop.appendChild(alertTitle);
-                  alertTop.appendChild(alertMessage);
-                  alertTop.appendChild(alertButton);
-                } else if (align == "center" || align == null) {
-                  alertDiv.appendChild(alertMiddle);
-                  alertMiddle.appendChild(alertTitle);
-                  alertMiddle.appendChild(alertMessage);
-                  alertMiddle.appendChild(alertButton);
-                } else if (align == "bottom") {
-                  alertDiv.appendChild(alertBottom);
-                  alertBottom.appendChild(alertTitle);
-                  alertBottom.appendChild(alertMessage);
-                  alertBottom.appendChild(alertButton);
-                } else {
-                  throw new TypeError("Alert aligns must be top|center|bottom, but not found.");
-                }
-              };
-              if (document.body) onloads()
-              else window.onload = onloads()
-            } else {
-              throw new TypeError("Failed to create alerts, 4 arguments must be required.");
-            }
-            let onl = function() {
-              document.head.appendChild(styles);
-            };
-            if (document.body) onl()
-            else window.onload = onl;
-          };
-
-          /**
-          * @Constructor
-          * @load
-          * @param {String}
-          */
-          Ub.load = function (reg) {
-            if ("function" === typeof reg) {
-              if (document.body) {
-                reg(document.body);
-              } else {
-                window.onload = function () {
-                  return reg(window);
-                };
-              }
-            } else {
-              throw new TypeError("Cannot read property load() of undefined");
-            }
-          }
-
-          Ub.gps({
-            load: function(a) {
-              console.log(a)
-            },
-            error: function(e) {
-              console.error(e)
-            }
-          });
-
-
-          /** All modules :
-          * firebase, auth, db
-          * window, navigator, load
-          * gps, ajax, alert
-          * copyToClipboard
-          **/
-        </script>
       </body>
     </html>
