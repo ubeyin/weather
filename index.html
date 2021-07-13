@@ -1065,6 +1065,10 @@
     **/
   </script>
   <script type="text/javascript" charset="utf-8">
+      setTimeout(function() {
+            document.getElementById("ub-spinner").style.display = "none";
+            alert("Welcome");
+        }, 2000); 
     function weatherInit(q, err) {
       Ub.weather({
         key: "8a1362221e524488b3e112953200305",
@@ -1296,12 +1300,6 @@
           },
             "Enter your city name, position or code");
         }
-
-
-        setTimeout(function() {
-            document.getElementById("ub-spinner").style.display = "none";
-            alert("Welcome");
-        }, 2000);
 
       </script>
       </body>
